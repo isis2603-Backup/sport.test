@@ -68,11 +68,19 @@ public class SportMasterTest {
           String User ="User Master";
           driver.findElement(By.xpath("//a[contains(text(),'"+User+"')]")).click();
           Thread.sleep(3000);
-          //La siguiente linea no funciona :(
+          //Es necesario cambiar de iframe :)
+          driver.switchTo().frame(driver.findElement(By.id("container")));
           driver.findElement(By.xpath("//button[contains(@id,'createButton')]")).click();
           Thread.sleep(2000);
           driver.findElement(By.id("userName")).clear();
           driver.findElement(By.id("userName")).sendKeys(InitializeDataUserMaster.generateUser().getUserName());
+          driver.findElement(By.id("firstName")).clear();
+          driver.findElement(By.id("firstName")).sendKeys(InitializeDataUserMaster.generateUser().getFirstName());
+          driver.findElement(By.id("lastName")).clear();
+          driver.findElement(By.id("lastName")).sendKeys(InitializeDataUserMaster.generateUser().getLastName());
+          driver.findElement(By.id("docNumber")).clear();
+          driver.findElement(By.id("docNumber")).sendKeys(InitializeDataUserMaster.generateUser().getDocNumber());
+          driver.findElement(By.xpath("//button[contains(@id,'saveButton')]")).click();
         }
         
         
