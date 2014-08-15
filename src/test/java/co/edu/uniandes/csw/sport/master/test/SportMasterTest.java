@@ -6,8 +6,14 @@
 
 package co.edu.uniandes.csw.sport.master.test;
 
+import co.edu.uniandes.csw.address.logic.dto.AddressDTO;
+import co.edu.uniandes.csw.sport.logic.dto.SportDTO;
 import co.edu.uniandes.csw.sport.master.utils.test.InitializeDataUserMaster;
+import co.edu.uniandes.csw.user.logic.dto.UserDTO;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -29,6 +35,9 @@ public class SportMasterTest {
         private static WebDriver driver;
         // url en el cual se aloja la página web (en este caso localhost:8080)
         private static String baseUrl;
+        private static UserDTO dataUser;
+        private static AddressDTO dataAddress;
+        private static SportDTO dataSport;
         // variable que indica si varios alert consecutivos (alert javascript) se tomarán
         private static boolean acceptNextAlert = true;
         private static StringBuffer verificationErrors = new StringBuffer();
@@ -57,7 +66,7 @@ public class SportMasterTest {
         public void testCreateUserMaster() throws Exception{
         
             /**
-         * Comando que realiza click sobre el boton "create" del toolbar. La
+         * Comando que realiza click sobre el boton "create" del toolbar del maestro. La
          * función 'find' encuentra el control y posteriormente hace clic en el
          * mismo. La forma en la que se busca el control es utilizando
          * expresiones xPath ya que los id de los mismos nunca son iguales (se
@@ -72,18 +81,89 @@ public class SportMasterTest {
           driver.switchTo().frame(driver.findElement(By.id("container")));
           driver.findElement(By.xpath("//button[contains(@id,'createButton')]")).click();
           Thread.sleep(2000);
+          dataUser= InitializeDataUserMaster.generateUser();
           driver.findElement(By.id("userName")).clear();
-          driver.findElement(By.id("userName")).sendKeys(InitializeDataUserMaster.generateUser().getUserName());
+          driver.findElement(By.id("userName")).sendKeys(dataUser.getUserName());
           driver.findElement(By.id("firstName")).clear();
-          driver.findElement(By.id("firstName")).sendKeys(InitializeDataUserMaster.generateUser().getFirstName());
+          driver.findElement(By.id("firstName")).sendKeys(dataUser.getFirstName());
           driver.findElement(By.id("lastName")).clear();
-          driver.findElement(By.id("lastName")).sendKeys(InitializeDataUserMaster.generateUser().getLastName());
+          driver.findElement(By.id("lastName")).sendKeys(dataUser.getLastName());
           driver.findElement(By.id("docNumber")).clear();
-          driver.findElement(By.id("docNumber")).sendKeys(InitializeDataUserMaster.generateUser().getDocNumber());
+          driver.findElement(By.id("docNumber")).sendKeys(dataUser.getDocNumber());
+          String Address="Address";
+          driver.findElement(By.xpath("//a[contains(text(),'"+Address+"')]")).click();
+          Thread.sleep(2500);
+         //*[@id="93-createButton"] /html/body/div[1]/div[2]/div/div[1]/div[1]/nav/div[2]/form/button
+          driver.findElement(By.xpath("/html/body/div[1]/div[2]/div/div[1]/div[1]/nav/div[2]/form/button")).click();         
+          dataAddress=InitializeDataUserMaster.generateAddress();
+          Thread.sleep(2000);
+          driver.findElement(By.id("street")).clear();
+          driver.findElement(By.id("street")).sendKeys(dataAddress.getStreet());
+          driver.findElement(By.id("aveneu")).clear();
+          driver.findElement(By.id("aveneu")).sendKeys(dataAddress.getAveneu());
+          driver.findElement(By.xpath("/html/body/div[1]/div[2]/div/div[1]/div[1]/nav/div[2]/form/button[2]")).click();
+          Thread.sleep(2000);
           driver.findElement(By.xpath("//button[contains(@id,'saveButton')]")).click();
+          Thread.sleep(2000);
+          List<WebElement> table = driver.findElements(By.xpath("//table[contains(@class,'table striped')]/tbody/tr"));
+          boolean success = false;
+          for (WebElement webElement : table) {
+            List<WebElement> elems = webElement.findElements(By.xpath("td"));
+            if (elems.get(0).getText().equals(dataUser.getUserName()) && elems.get(1).getText().equals(dataUser.getFirstName())) {
+                success = true;
+            }
+          }
+          
+          assertTrue(success); 
         }
         
-        
+     @Test 
+     public void testEditAddress() throws Exception{
+         
+         driver.get(baseUrl + "/sport.web/userMaster.html");
+         Thread.sleep(2000);
+         List<WebElement> table = driver.findElements(By.xpath("//table[contains(@class,'table striped')]/tbody/tr"));
+         if (table.size()>0){
+             //Trae el ultimo elemento fila y hace click
+             driver.findElements(By.linkText("Edit")).get(driver.findElements(By.linkText("Edit")).size()-1).click();
+             Thread.sleep(2000);
+             String Address="Address";
+             driver.findElement(By.xpath("//a[contains(text(),'"+Address+"')]")).click();
+             Thread.sleep(2500);
+             //El mock no esta guardando el detalle address
+             driver.findElement(By.xpath("/html/body/div[1]/div[2]/div/div[1]/div[3]/div/table/tbody/tr/td[4]/a[1]"));//create       
+             dataAddress=InitializeDataUserMaster.generateAddress();
+             Thread.sleep(2000);
+             driver.findElement(By.id("street")).clear();
+             driver.findElement(By.id("street")).sendKeys(dataAddress.getStreet());
+             driver.findElement(By.id("aveneu")).clear();
+             driver.findElement(By.id("aveneu")).sendKeys(dataAddress.getAveneu());
+             driver.findElement(By.xpath("/html/body/div[1]/div[2]/div/div[1]/div[1]/nav/div[2]/form/button[2]")).click();//save
+             Thread.sleep(2000);
+             List<WebElement> tables = driver.findElements(By.xpath("/html/body/div[1]/div[2]/div/div[1]/div[3]/div/table"));
+             boolean success = false;
+             for (WebElement webElement : tables) {
+              List<WebElement> elems = webElement.findElements(By.xpath("td"));
+              if (elems.get(0).getText().equals(dataAddress.getStreet()) && elems.get(1).getText().equals(dataAddress.getAveneu())) {
+                  success = true;
+              }
+             }
+             
+             driver.findElement(By.xpath("//button[contains(@id,'saveButton')]")).click();
+             Thread.sleep(2000);
+             
+          
+             assertTrue(success); 
+             
+         
+         
+         
+         
+         }
+
+
+
+    }
         
         
         
