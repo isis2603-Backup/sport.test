@@ -7,9 +7,11 @@
 package co.edu.uniandes.csw.sport.master.test;
 
 import co.edu.uniandes.csw.sport.master.utils.test.InitializeDataUserMaster;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import static junit.framework.Assert.fail;
 import org.junit.AfterClass;
+import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -83,30 +85,116 @@ public class SportMasterTest {
           driver.findElement(By.xpath("//button[contains(@id,'saveButton')]")).click();
         }
         
+    
+
+    @Test
+    public void createUserSport() throws Exception {
+        Thread.sleep(2000);
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        @AfterClass
-        public static void tearDown() throws Exception {
-            // Se cierra el navegador.
-            driver.quit();
-           // Se verifica que se haya cerrado efectivamente el navegador.
-            String verificationErrorString = verificationErrors.toString();
-            if (!"".equals(verificationErrorString)) {
-                fail(verificationErrorString);
+        driver.get(baseUrl + "/sport.web/userMaster.html");
+        Thread.sleep(5000);
+        driver.findElement(By.xpath("//button[contains(@id,'createButton')]")).click();
+        Thread.sleep(2000);
+        driver.findElement(By.id("userName")).clear();
+        driver.findElement(By.id("userName")).sendKeys("nombre");
+                driver.findElement(By.id("firstName")).clear();
+        driver.findElement(By.id("firstName")).sendKeys("nombre1");
+                driver.findElement(By.id("lastName")).clear();
+        driver.findElement(By.id("lastName")).sendKeys("nombre2");
+        //HREF indicando el tab de detalle a seleccionar
+        driver.findElement(By.xpath("//a[contains(@href,'sport')]")).click();
+        Thread.sleep(2000);
+        driver.findElement(By.xpath("//button[contains(@id,'addButton')]")).click();
+        List<WebElement> lst = driver.findElements(By.xpath("//input[@type='checkbox']"));
+        for (int i = 0; i < lst.size(); i++) {
+            if (!lst.get(i).isSelected()) {
+                lst.get(i).click();
             }
         }
+        driver.findElement(By.id("addButton")).click();
+        List<WebElement> tables = driver.findElement(By.xpath("//div[contains(@id,'sport')]")).findElements(By.xpath("//table[contains(@class,'table striped')]/tbody/tr"));
+        if (tables.size() != lst.size()) {
+            fail();
+        }
+        driver.findElement(By.xpath("//button[contains(@id,'saveButton')]")).click();
+        Thread.sleep(3000);
+        List<WebElement> table = driver.findElements(By.xpath("//table[contains(@class,'table striped')]/tbody/tr"));
+        boolean fail = false;
+        for (WebElement webElement : table) {
+            List<WebElement> elems = webElement.findElements(By.xpath("td"));
+            if (elems.get(0).getText().equals("nombre") && elems.get(1).getText().equals("nombre1")) {
+                fail = true;
+            }
+        }
+        //InitializeData.flushDataShared();
+        assertTrue(fail);
+    }
+
+    @Test
+    public void editUserSport() throws Exception {
+        //InitializeData.fetchData(5);
+         driver.get(baseUrl + "/sport.web/userMaster.html");
+        driver.findElements(By.linkText("Edit")).get(driver.findElements(By.linkText("Edit")).size() - 1).click();
+        Thread.sleep(2000);
+        driver.findElement(By.id("firstName")).clear();
+        driver.findElement(By.id("firstName")).sendKeys("nombre1mod");
+        driver.findElement(By.id("lastName")).clear();
+        driver.findElement(By.id("lastName")).sendKeys("nombre2omod");
+        driver.findElement(By.xpath("//a[contains(@href,'testB')]")).click();
+        Thread.sleep(2000);
+        driver.findElement(By.xpath("//button[contains(@id,'addButton')]")).click();
+        List<WebElement> lst = driver.findElements(By.xpath("//input[@type='checkbox']"));
+        for (int i = 0; i < lst.size(); i++) {
+            if (!lst.get(i).isSelected()) {
+                lst.get(i).click();
+            }
+        }
+        driver.findElement(By.id("addButton")).click();
+        driver.findElement(By.xpath("//button[contains(@id,'saveButton')]")).click();
+        Thread.sleep(3000);
+        List<WebElement> table = driver.findElements(By.xpath("//table[contains(@class,'table striped')]/tbody/tr"));
+        boolean fail = false;
+        for (WebElement webElement : table) {
+            List<WebElement> elems = webElement.findElements(By.xpath("td"));
+            if (elems.get(0).getText().equals("nombre") && elems.get(1).getText().equals("nombre1")) {
+                fail = true;
+            }
+        }
+        //InitializeData.flushDataShared();
+        assertTrue(fail);
+    }
+    @Test
+    public void deleteUserSport() throws Exception {
+        //InitializeData.fetchData(5);
+        /**
+         * Se hace clic en el vinculo "Delete" del primer elemento de la lista
+         * de sports
+         */
+         driver.get(baseUrl + "/sport.web/userMaster.html");
+        driver.findElement(By.linkText("Delete")).click();
+        Thread.sleep(2000);
+        /**
+         * Se verifica que en la lista el elemento halla desaparecido. Si
+         * existe, hubo un error.
+         */
+        try {
+            List<WebElement> table = driver.findElements(By.xpath("//table[contains(@class,'table striped')]/tbody/tr"));
+            boolean fail = false;
+            for (WebElement webElement : table) {
+                List<WebElement> elems = webElement.findElements(By.xpath("td"));
+                if (elems.get(0).getText().equals("nombre")) {
+                    fail = true;
+                }
+            }
+            WebElement dialog = driver.findElement(By.xpath("//div[contains(@style,'display: block;')]"));
+            assertTrue(dialog != null && !fail);
+        } catch (Exception e) {
+            assertTrue(true);
+        }
+    }
+
+    @AfterClass
+    public static void tearDown() throws Exception {
+        driver.quit();
+    }
 }
