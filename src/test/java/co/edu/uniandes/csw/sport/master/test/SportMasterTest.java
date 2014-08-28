@@ -51,6 +51,8 @@ public class SportMasterTest {
             driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
               /** Cambia el tamanio de la ventana del explorador para que los controles backbone se muestren correctamente en la prueba*/
             driver.manage().window().setSize(new Dimension(1400, 700));
+            //carga en la base de datos 4 objetos de tipo sport
+            //InitializeDataUserMaster.insertDataSport(4);
         }
         // La anotación ‘@AfterClass’ indica lo que se debe ejecutar DESPUÉS de ejecutar
         // el archivo de pruebas. Este método cierra la ventana de firefox 
@@ -131,7 +133,8 @@ public class SportMasterTest {
              driver.findElement(By.xpath("//a[contains(text(),'"+Address+"')]")).click();
              Thread.sleep(2500);
              //El mock no esta guardando el detalle address
-             driver.findElement(By.xpath("/html/body/div[1]/div[2]/div/div[1]/div[3]/div/table/tbody/tr/td[4]/a[1]"));//create       
+             driver.findElement(By.xpath("/html/body/div[1]/div[2]/div/div[1]/div[3]/div/table/tbody/tr/td[4]/a[1]")).click();//create       
+                                          
              dataAddress=InitializeDataUserMaster.generateAddress();
              Thread.sleep(2000);
              driver.findElement(By.id("street")).clear();
@@ -140,7 +143,8 @@ public class SportMasterTest {
              driver.findElement(By.id("aveneu")).sendKeys(dataAddress.getAveneu());
              driver.findElement(By.xpath("/html/body/div[1]/div[2]/div/div[1]/div[1]/nav/div[2]/form/button[2]")).click();//save
              Thread.sleep(2000);
-             List<WebElement> tables = driver.findElements(By.xpath("/html/body/div[1]/div[2]/div/div[1]/div[3]/div/table"));
+             List<WebElement> tables = driver.findElements(By.xpath("/html/body/div[1]/div[2]/div/div[1]/div[3]/div/table/tbody/tr"));
+                                                                     ///html/body/div[1]/div[2]/div/div[1]/div[3]/div/table/tbody/tr/td[1]
              boolean success = false;
              for (WebElement webElement : tables) {
               List<WebElement> elems = webElement.findElements(By.xpath("td"));
@@ -291,5 +295,6 @@ public class SportMasterTest {
     @AfterClass
     public static void tearDown() throws Exception {
         driver.quit();
+        InitializeDataUserMaster.deleteBd();
     }
 }
