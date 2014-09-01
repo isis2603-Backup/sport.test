@@ -204,12 +204,14 @@ public class SportMasterTest {
         driver.findElement(By.xpath("//a[contains(@href,'sport')]")).click();
         Thread.sleep(2000);
         driver.findElement(By.xpath("//button[contains(@id,'addButton')]")).click();
-        List<WebElement> lst = driver.findElements(By.xpath("//input[@type='checkbox']"));
-        for (int i = 0; i < lst.size(); i++) {
-            if (!lst.get(i).isSelected()) {
-                lst.get(i).click();
+        //List<WebElement> lst = driver.findElements(By.xpath("//input[@type='checkbox']"));
+        //Toma todos los webElement cuyo id sea "selection" y de tipo checkbox.
+        List<WebElement> lst = driver.findElements(By.xpath("//input[contains(@id,'selection')][@type='checkbox']"));
+            for (WebElement lst1 : lst) {
+                if (!lst1.isSelected()) {
+                    lst1.click(); // Si no esta seleccionado hace click en el checkbox, agrega todos los deportes existentes
+                }
             }
-        }
         driver.findElement(By.id("addButton")).click();
         List<WebElement> tables = driver.findElement(By.xpath("//div[contains(@id,'sport')]")).findElements(By.xpath("//table[contains(@class,'table striped')]/tbody/tr"));
         if (tables.size() != lst.size()) {
@@ -295,6 +297,6 @@ public class SportMasterTest {
     @AfterClass
     public static void tearDown() throws Exception {
         driver.quit();
-        InitializeDataUserMaster.deleteBd();
+        //InitializeDataUserMaster.deleteBd();
     }
 }
