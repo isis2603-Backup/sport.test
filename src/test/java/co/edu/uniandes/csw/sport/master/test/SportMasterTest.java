@@ -10,11 +10,15 @@ import co.edu.uniandes.csw.address.logic.dto.AddressDTO;
 import co.edu.uniandes.csw.sport.logic.dto.SportDTO;
 import co.edu.uniandes.csw.sport.master.utils.test.InitializeDataUserMaster;
 import co.edu.uniandes.csw.user.logic.dto.UserDTO;
+import co.edu.uniandes.csw.user.master.persistence.api.IUserMasterPersistence;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -42,6 +46,7 @@ public class SportMasterTest {
         private static boolean acceptNextAlert = true;
         private static StringBuffer verificationErrors = new StringBuffer();
        /*La anotación ‘@BeforeClass’ indica lo que se debe ejecutar ANTES de correr el archivo de pruebas. Este método instancia un nuevo driver firefox (causando la apertura de una ventana física de firefox).*/
+     
         @BeforeClass
         public static void setUp() throws Exception {
             driver = new FirefoxDriver();
@@ -51,8 +56,10 @@ public class SportMasterTest {
             driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
               /** Cambia el tamanio de la ventana del explorador para que los controles backbone se muestren correctamente en la prueba*/
             driver.manage().window().setSize(new Dimension(1400, 700));
+            
             //carga en la base de datos 4 objetos de tipo sport
             //InitializeDataUserMaster.insertDataSport(4);
+            
         }
         // La anotación ‘@AfterClass’ indica lo que se debe ejecutar DESPUÉS de ejecutar
         // el archivo de pruebas. Este método cierra la ventana de firefox 
@@ -61,11 +68,22 @@ public class SportMasterTest {
         @Before
         public void setUpUrl(){
             driver.get(baseUrl + "/sport.web/");
+            //carga en la base de datos 4 objetos de tipo sport
+            InitializeDataUserMaster.insertUserAddressSport(4);
         
         }
+        /**
+     *
+     */
+        @After
+        public void deleteBdatos(){
+             InitializeDataUserMaster.deleteBd();  
+        }
         
-        @Test
-        public void testCreateUserMaster() throws Exception{
+        
+        
+    @Test
+    public void testCreateUserMaster() throws Exception{
         
             /**
          * Comando que realiza click sobre el boton "create" del toolbar del maestro. La
@@ -117,9 +135,9 @@ public class SportMasterTest {
           }
           
           assertTrue(success); 
-        }
+    }
         
-     @Test 
+    @Test 
      public void testEditAddress() throws Exception{
          
          driver.get(baseUrl + "/sport.web/userMaster.html");
@@ -144,7 +162,7 @@ public class SportMasterTest {
              driver.findElement(By.xpath("/html/body/div[1]/div[2]/div/div[1]/div[1]/nav/div[2]/form/button[2]")).click();//save
              Thread.sleep(2000);
              List<WebElement> tables = driver.findElements(By.xpath("/html/body/div[1]/div[2]/div/div[1]/div[3]/div/table/tbody/tr"));
-                                                                     ///html/body/div[1]/div[2]/div/div[1]/div[3]/div/table/tbody/tr/td[1]
+                                                                     
              boolean success = false;
              for (WebElement webElement : tables) {
               List<WebElement> elems = webElement.findElements(By.xpath("td"));
@@ -163,26 +181,13 @@ public class SportMasterTest {
          
          
          
-         }
+    }
 
 
 
     }
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+  
   
     
 
@@ -234,36 +239,55 @@ public class SportMasterTest {
     @Test
     public void editUserSport() throws Exception {
         //InitializeData.fetchData(5);
-         driver.get(baseUrl + "/sport.web/userMaster.html");
+        driver.get(baseUrl + "/sport.web/userMaster.html");
         driver.findElements(By.linkText("Edit")).get(driver.findElements(By.linkText("Edit")).size() - 1).click();
         Thread.sleep(2000);
+        driver.findElement(By.id("userName")).clear();
+        driver.findElement(By.id("userName")).sendKeys("nombre1mod");
         driver.findElement(By.id("firstName")).clear();
-        driver.findElement(By.id("firstName")).sendKeys("nombre1mod");
-        driver.findElement(By.id("lastName")).clear();
-        driver.findElement(By.id("lastName")).sendKeys("nombre2omod");
-        driver.findElement(By.xpath("//a[contains(@href,'testB')]")).click();
+        driver.findElement(By.id("firstName")).sendKeys("nombre2mod");
+        driver.findElement(By.xpath("//a[contains(@href,'sport')]")).click();
         Thread.sleep(2000);
-        driver.findElement(By.xpath("//button[contains(@id,'addButton')]")).click();
-        List<WebElement> lst = driver.findElements(By.xpath("//input[@type='checkbox']"));
-        for (int i = 0; i < lst.size(); i++) {
-            if (!lst.get(i).isSelected()) {
-                lst.get(i).click();
+        List<WebElement> tables = driver.findElements(By.xpath("/html/body/div[1]/div[2]/div/div[2]/div[3]/div/table/tbody/tr"));
+        SportDTO sport;
+        Thread.sleep(2000);
+            for (WebElement table : tables) {
+                driver.findElements(By.linkText("Delete")).get(driver.findElements(By.linkText("Delete")).size()-1).click();
+                Thread.sleep(2000);
+//                sport=InitializeDataUserMaster.generateSport();
+//                driver.findElement(By.id("name")).clear();
+//                driver.findElement(By.id("name")).sendKeys(sport.getName());
+//                driver.findElement(By.id("minAge")).clear();
+//                driver.findElement(By.id("minAge")).sendKeys(sport.getMinAge().toString());
+//                driver.findElement(By.id("maxAge")).clear();
+//                driver.findElement(By.id("maxAge")).sendKeys(sport.getMaxAge().toString());
+//                driver.findElement(By.xpath("/html/body/div[1]/div[2]/div/div[2]/div[1]/nav/div[2]/form/button[1]")).click();
+//                Thread.sleep(1000);
             }
-        }
-        driver.findElement(By.id("addButton")).click();
+            
+        driver.findElement(By.xpath("//button[contains(@id,'addButton')]")).click();
+        List<WebElement> lst = driver.findElements(By.xpath("//input[contains(@id,'selection')][@type='checkbox']"));
+             for (WebElement lst1 : lst) {
+                  if (!lst1.isSelected()) {
+                         lst1.click();
+                          }
+                      } 
+        driver.findElement(By.id("addButton")).click();  
+        Thread.sleep(2000);
         driver.findElement(By.xpath("//button[contains(@id,'saveButton')]")).click();
         Thread.sleep(3000);
         List<WebElement> table = driver.findElements(By.xpath("//table[contains(@class,'table striped')]/tbody/tr"));
         boolean fail = false;
         for (WebElement webElement : table) {
             List<WebElement> elems = webElement.findElements(By.xpath("td"));
-            if (elems.get(0).getText().equals("nombre") && elems.get(1).getText().equals("nombre1")) {
+            if (elems.get(0).getText().equals("nombre1mod") && elems.get(1).getText().equals("nombre2mod")) {
                 fail = true;
             }
         }
         //InitializeData.flushDataShared();
         assertTrue(fail);
     }
+    
     @Test
     public void deleteUserSport() throws Exception {
         //InitializeData.fetchData(5);
@@ -271,7 +295,7 @@ public class SportMasterTest {
          * Se hace clic en el vinculo "Delete" del primer elemento de la lista
          * de sports
          */
-         driver.get(baseUrl + "/sport.web/userMaster.html");
+        driver.get(baseUrl + "/sport.web/userMaster.html");
         driver.findElement(By.linkText("Delete")).click();
         Thread.sleep(2000);
         /**
@@ -293,10 +317,16 @@ public class SportMasterTest {
             assertTrue(true);
         }
     }
-
+    
+    
+    
+    
+    
+    
     @AfterClass
     public static void tearDown() throws Exception {
         driver.quit();
+        //borra la bd de datos
         //InitializeDataUserMaster.deleteBd();
     }
 }
