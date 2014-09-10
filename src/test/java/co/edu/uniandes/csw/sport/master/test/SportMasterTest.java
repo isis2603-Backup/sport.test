@@ -34,6 +34,8 @@ import org.openqa.selenium.support.ui.Select;
  *
  * @author Jj.alarcon10
  */
+
+
 public class SportMasterTest {
         // Es la instancia inicial del web driver que controlará el navegador firefox
         private static WebDriver driver;
@@ -57,13 +59,8 @@ public class SportMasterTest {
               /** Cambia el tamanio de la ventana del explorador para que los controles backbone se muestren correctamente en la prueba*/
             driver.manage().window().setSize(new Dimension(1400, 700));
             
-            //carga en la base de datos 4 objetos de tipo sport
-            //InitializeDataUserMaster.insertDataSport(4);
-            
         }
-        // La anotación ‘@AfterClass’ indica lo que se debe ejecutar DESPUÉS de ejecutar
-        // el archivo de pruebas. Este método cierra la ventana de firefox 
-        // abierta por @BeforeClass que se utilizó para la prueba.
+  
         
         @Before
         public void setUpUrl(){
@@ -175,24 +172,20 @@ public class SportMasterTest {
              Thread.sleep(2000);
              
           
-             assertTrue(success); 
-             
+             assertTrue(success);     
          
-         
-         
-         
+         }
     }
 
-
-
-    }
-        
-  
-  
-    
-
+     
+     /**
+         * CreateUserSport-> Crea un nuevo User y le asocia varios elementos sport
+         * 
+         */
     @Test
     public void createUserSport() throws Exception {
+        
+        
         Thread.sleep(2000);
         
         driver.get(baseUrl + "/sport.web/userMaster.html");
@@ -201,15 +194,14 @@ public class SportMasterTest {
         Thread.sleep(2000);
         driver.findElement(By.id("userName")).clear();
         driver.findElement(By.id("userName")).sendKeys("nombre");
-                driver.findElement(By.id("firstName")).clear();
+        driver.findElement(By.id("firstName")).clear();
         driver.findElement(By.id("firstName")).sendKeys("nombre1");
-                driver.findElement(By.id("lastName")).clear();
+        driver.findElement(By.id("lastName")).clear();
         driver.findElement(By.id("lastName")).sendKeys("nombre2");
         //HREF indicando el tab de detalle a seleccionar
         driver.findElement(By.xpath("//a[contains(@href,'sport')]")).click();
         Thread.sleep(2000);
         driver.findElement(By.xpath("//button[contains(@id,'addButton')]")).click();
-        //List<WebElement> lst = driver.findElements(By.xpath("//input[@type='checkbox']"));
         //Toma todos los webElement cuyo id sea "selection" y de tipo checkbox.
         List<WebElement> lst = driver.findElements(By.xpath("//input[contains(@id,'selection')][@type='checkbox']"));
             for (WebElement lst1 : lst) {
@@ -232,13 +224,16 @@ public class SportMasterTest {
                 fail = true;
             }
         }
-        //InitializeData.flushDataShared();
         assertTrue(fail);
     }
 
+    /**
+         * editUserSport-> Edita un User existente que tiene varios sports asociados. 1. Elimina todos los elementos sports asociados 2. Agrega varios sports 3. Verfica que el objeto haya sido actualizado
+         * 
+         */
     @Test
     public void editUserSport() throws Exception {
-        //InitializeData.fetchData(5);
+        
         driver.get(baseUrl + "/sport.web/userMaster.html");
         driver.findElements(By.linkText("Edit")).get(driver.findElements(By.linkText("Edit")).size() - 1).click();
         Thread.sleep(2000);
@@ -254,15 +249,6 @@ public class SportMasterTest {
             for (WebElement table : tables) {
                 driver.findElements(By.linkText("Delete")).get(driver.findElements(By.linkText("Delete")).size()-1).click();
                 Thread.sleep(2000);
-//                sport=InitializeDataUserMaster.generateSport();
-//                driver.findElement(By.id("name")).clear();
-//                driver.findElement(By.id("name")).sendKeys(sport.getName());
-//                driver.findElement(By.id("minAge")).clear();
-//                driver.findElement(By.id("minAge")).sendKeys(sport.getMinAge().toString());
-//                driver.findElement(By.id("maxAge")).clear();
-//                driver.findElement(By.id("maxAge")).sendKeys(sport.getMaxAge().toString());
-//                driver.findElement(By.xpath("/html/body/div[1]/div[2]/div/div[2]/div[1]/nav/div[2]/form/button[1]")).click();
-//                Thread.sleep(1000);
             }
             
         driver.findElement(By.xpath("//button[contains(@id,'addButton')]")).click();
@@ -284,17 +270,16 @@ public class SportMasterTest {
                 fail = true;
             }
         }
-        //InitializeData.flushDataShared();
         assertTrue(fail);
     }
     
-    @Test
-    public void deleteUserSport() throws Exception {
-        //InitializeData.fetchData(5);
-        /**
-         * Se hace clic en el vinculo "Delete" del primer elemento de la lista
+    /**
+         * deleteUserSport->Hace clic en el vinculo "Delete" del primer elemento de la lista
          * de sports
          */
+    @Test
+    public void deleteUserSport() throws Exception {
+        
         driver.get(baseUrl + "/sport.web/userMaster.html");
         driver.findElement(By.linkText("Delete")).click();
         Thread.sleep(2000);
@@ -318,15 +303,14 @@ public class SportMasterTest {
         }
     }
     
-    
-    
-    
-    
-    
+    /**
+         *  La anotación ‘@AfterClass’ indica lo que se debe ejecutar DESPUÉS de ejecutar
+            el archivo de pruebas. Este método cierra la ventana de firefox 
+            abierta por @BeforeClass que se utilizó para la prueba. 
+         */
     @AfterClass
     public static void tearDown() throws Exception {
         driver.quit();
-        //borra la bd de datos
-        //InitializeDataUserMaster.deleteBd();
+      
     }
 }
